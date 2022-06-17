@@ -21,6 +21,7 @@
                         @endif
                         <form method="POST" action="{{ route('create.user') }}">
                             @csrf
+                            <a class="btn btn-secondary" href="{{ url()->previous() }}"><i class="fa-solid fa-reply"></i></a>
                             <div class="row mb-3">
                                 <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
 

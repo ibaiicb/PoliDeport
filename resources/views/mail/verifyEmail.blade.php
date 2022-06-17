@@ -6,7 +6,7 @@
         <title>{{ __('Verify email') }}</title>
     </head>
     <body>
-        <p>{{ __('Verify the email by this link:') }}</p>
+        <p>{{ __('Verify the email by this link') }}:</p>
         <p>
             <a href="{{ route('change.verify.email') }}">{{ __('Verify email') }}</a>
         </p>

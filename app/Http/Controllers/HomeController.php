@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use App\Models\Type;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
+use App\DataTables\UsersDataTable;
 
 class HomeController extends Controller
 {
@@ -16,7 +20,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+
     }
 
     /**
@@ -24,33 +28,36 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(UsersDataTable $dataTable)
     {
-//        dd(Auth::user()->roles()->first()->name);
-        if(Auth::user()->roles()->first()->name === 'Super Admin') {
-            $users = $this->getUsers();
-//          dd($users);
-            return view('home')->with('users', $users);
-        }else if(Auth::user()->roles()->first()->name === 'Admin') {
-            $users = $this->getUsers();
-            return view('home')->with('users', $users);
+//        dd(Auth::guest());
+        if(Auth::check() && (Auth::user()->roles()->first()->name === 'Super Admin' || Auth::user()->roles()->first()->name === 'Admin')) {
+            return $dataTable->render('admin.userList');
         }else {
-//                $products = getProducts();
-                return view('home')/*->with()*/;
+            $products = $this->getProducts();
+            $types = $this->getTypes();
+            $images = $this->getImages();
+
+            return view('client.home')->with('products', $products)->with('types', $types)->with('images', $images);
         }
     }
 
-    /**
-     * Return all the users except the actual user that login.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]|\Illuminate\Support\Collection
-     */
-    public function getUsers() {
-
-        return User::withTrashed()->whereNotIn('id', [Auth::user()->id])->get();
+    public function getProducts() {
+        return Product::all();
     }
 
-//    public function getProducts() {
-//
-//    }
+    public function getImages() {
+        $media=[];
+        $products = Product::all();
+
+        foreach ($products as $product) {
+            $media[$product->id] = $product->getMedia('product')->last()->getUrl();
+        }
+
+        return $media;
+    }
+
+    public function getTypes() {
+        return Type::all();
+    }
 }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('stock')->nullable();
             $table->foreignId('type_id')->constrained('types')->onDelete('cascade');
             $table->string('description');
+            $table->float('price');
             $table->timestamps();
         });
     }

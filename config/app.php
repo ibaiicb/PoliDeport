@@ -82,7 +82,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'es',
 
     /*
     |--------------------------------------------------------------------------
@@ -95,7 +95,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => 'es',
 
     /*
     |--------------------------------------------------------------------------
@@ -108,7 +108,7 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+    'faker_locale' => 'es_EU',
 
     /*
     |--------------------------------------------------------------------------
@@ -183,6 +183,13 @@ return [
 
         // Laravel permissions
         Spatie\Permission\PermissionServiceProvider::class,
+
+        // Laravel Datatables
+        Yajra\DataTables\DataTablesServiceProvider::class,
+        Yajra\DataTables\ButtonsServiceProvider::class,
+
+        //Dompdf
+        Barryvdh\DomPDF\ServiceProvider::class,
 
     ],
 

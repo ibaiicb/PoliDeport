@@ -34,6 +34,8 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'delete client'])->assignRole($superAdminRole);
         Permission::create(['name' => 'delete product'])->assignRole($superAdminRole);
 
+        Permission::create(['name' => 'show graphics'])->assignRole($superAdminRole, $adminRole);
+
         //Super Admin and Admin can create, read, update and delete products and clients
         Permission::create(['name' => 'create product'])->assignRole($superAdminRole, $adminRole);
         Permission::create(['name' => 'read product'])->assignRole($superAdminRole, $adminRole, $clientRole);

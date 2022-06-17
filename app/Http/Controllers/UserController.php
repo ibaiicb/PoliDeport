@@ -2,25 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\UsersDataTable;
 use App\Mail\CredentialsGeneratedUser;
 use App\Mail\VerifyEmail;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    public function index(Request $request) {
+    public function index(UsersDataTable $dataTable) {
+        return $dataTable->render('admin.userList');
+    }
+
+    public function showCreateUser(Request $request) {
 //        dd($request->getRequestUri());
-        if ($request->getRequestUri() === '/create/user/admin?') {
+        if ($request->getRequestUri() === '/create/user/admin') {
             return view('admin.createUser')->with('role', 'Admin');
         }else {
             return view('admin.createUser')->with('role', 'Client');
         }
     }
-
 
     public function store(Request $request) {
 //        dd($request);
@@ -45,7 +51,7 @@ class UserController extends Controller
 
         Mail::to($request->email)->send(new CredentialsGeneratedUser($user, $password));
 
-        return redirect()->route('home')->with('success','Usuario creado correctamente');
+        return redirect()->route('home')->with('success', __('User created successfully'));
     }
 
     public function showUser(Request $request) {
@@ -72,18 +78,59 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect('home')->with('success', 'success');
+        return redirect('/user/list')->with('success', __('User modified successfully'));
     }
 
     public function softDeleteUser(Request $request) {
         $user = User::find($request->id);
 
         $user->delete();
+    }
 
-        if($user->deleted_at == 'NULL') {
-            return (false);
+    public function deleteUser(Request $request) {
+//        dd($request);
+        $user = User::withTrashed()->findOrFail($request->id);
+
+        $user->forceDelete();
+    }
+
+    public function restoreUser(Request $request) {
+//        dd($request);
+        $user = User::withTrashed()->findOrFail($request->id);
+
+        $user->restore();
+    }
+
+    public function showMyData() {
+        return view('client.mydata');
+    }
+
+    public function updateUser(Request $request) {
+//        dd($request);
+
+        $user = User::find($request->id);
+
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->address = $request->address;
+        $user->email = $request->email;
+
+        $search = DB::table('users')
+            ->select('users.email')
+            ->where('users.email', '=', $request->email)
+            ->where('users.id', '!=', $request->id)
+            ->get();
+
+        if (isset($search[0])) {
+            return back()->with('error', __('There is already a user with that email'));
         }else {
-            return redirect('home')->with('success','success');
+            if ($request->file('avatar') !== null) {
+                $user->addMedia($request->file('avatar'))->toMediaCollection('avatars');
+            }
+
+            $user->save();
+
+            return redirect('home')->with('success', __('Data updated successfully'));
         }
     }
 
@@ -91,7 +138,7 @@ class UserController extends Controller
     {
 //        dd($request);
         if ($request->password !== $request->password_confirmation) {
-            return view('password.resetPassword')->with('error', 'Passwords do not match')->with('user', $request)->with('token', $request->token);
+            return view('password.resetPassword')->with('error', __('Passwords do not match'))->with('user', $request)->with('token', $request->token);
         }else {
             $user = User::find(auth()->id());
 
@@ -118,9 +165,9 @@ class UserController extends Controller
         $user->save();
 
         if ($user->roles()->first()->name === 'Client') {
-            return view('home')/*->with()*/;
+            return view('client.home')->with('products', (new HomeController())->getProducts())->with('types', (new HomeController())->getTypes());
         }else {
-            return view('home')->with('users', (new HomeController)->getUsers());
+            return view('admin.home');
         }
     }
 

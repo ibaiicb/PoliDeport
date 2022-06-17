@@ -1,0 +1,88 @@
+@extends('layouts.welcome')
+
+@section('content')
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card users-list-card">
+                    <div class="card-header">
+                        {{ __('Product List') }}
+                    </div>
+                    <div class="card-body">
+                        <div class="dt-buttons">
+                            <a href="{{ route('generate.products.pdf') }}" class='btn btn-primary'><i class='fa-solid fa-download'></i> {{__('Export to PDF')}}</a>
+                        </div>
+                        {{ $dataTable->table(['class' => 'table table-responsive table-striped table-hover text-center']) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if(session('success'))
+        <input type="hidden" id="session" value="{{ session('success') }}" />
+    @endif
+@endsection
+
+@push('scripts')
+    {{$dataTable->scripts()}}
+@endpush
+
+@push('alertScripts')
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.0.3/css/buttons.dataTables.min.css">
+    <script src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
+    <script src="/vendor/datatables/buttons.server-side.js"></script>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script>
+        function showDeleteProduct(product) {
+            Swal.fire({
+                title: '¿Seguro que quieres eliminar el producto: '+product['name']+'?',
+                text: 'No habrá vuelta atrás',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Seguro'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    let idProd = product['id'];
+
+                    $.ajax({
+                        url:'{{ route('delete.product') }}',
+                        data:{id: idProd},
+                        type:'DELETE',
+                        success: function (response) {
+                            $('#products-table').DataTable().draw();
+                            showToast('{{ __('Product deleted successfully') }}');
+                        },
+                    })
+                }
+            });
+        }
+
+        function showToast(message) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'bottom-start',
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true
+            });
+
+            Toast.fire({
+                icon: 'success',
+                title: message
+            });
+        }
+
+        if (document.getElementById('session').value.trim() !== '') {
+            showToast(document.getElementById('session').value.trim());
+        }
+    </script>
+@endpush

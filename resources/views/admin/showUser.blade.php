@@ -14,7 +14,7 @@
                                 {{ session('status') }}
                             </div>
                         @endif
-                        <a class="btn btn-secondary" href="{{ route('home') }}"><i class="fa-solid fa-reply"></i></a>
+                        <a class="btn btn-secondary" href="{{ url()->previous() }}"><i class="fa-solid fa-reply"></i></a>
                         <div class="row mb-3">
                             <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
 

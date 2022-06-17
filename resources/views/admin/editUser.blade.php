@@ -16,7 +16,7 @@
                         @endif
                         <form method="POST" action="{{ route('update.user', ['id' => $user->id]) }}">
                             @csrf
-                            <a class="btn btn-secondary" href="{{ route('home') }}"><i class="fa-solid fa-reply"></i></a>
+                            <a class="btn btn-secondary" href="{{ route('user.list') }}"><i class="fa-solid fa-reply"></i></a>
                             <input type="hidden" name="id" id="id" value="{{ $user->id }}">
                             <div class="row mb-3">
                                 <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>

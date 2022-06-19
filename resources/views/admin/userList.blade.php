@@ -8,7 +8,7 @@
                     <div class="card-header">
                         {{ __('User List') }}
                     </div>
-                    <div class="card-body">
+                    <div class="card-body table-responsive">
                         <div class="dt-buttons">
                             <a href="{{ route('generate.users.pdf') }}" class='btn btn-primary'><i class='fa-solid fa-download'></i> {{__('Export to PDF')}}</a>
                         </div>

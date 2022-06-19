@@ -19,7 +19,7 @@
                                 <label for="search">{{ __('Search') }}:</label>
                                 <input type="text" id="search" name="search" class="form-control">
 
-                                <button class="text-center navbar-toggler w-100 d-none" data-bs-toggle="collapse" data-bs-target="#menu-filter" aria-controls="menu-filter" aria-expanded="false" aria-label="Toggle Filter">
+                                <button class="text-center navbar-toggler w-100 d-none" data-bs-toggle="collapse" data-bs-target="#menu-filter" aria-controls="menu-filter" aria-expanded="false">
                                     <span>&#9660;</span>
                                 </button>
                                 <div class="w-100 collapse navbar-collapse" id="menu-filter">

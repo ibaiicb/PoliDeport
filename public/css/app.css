@@ -11627,3 +11627,16 @@ div.dt-buttons > .dt-button {
     }
 }
 
+@media (max-width: 425px) {
+    .product-modal-popup {
+        width: 100vw !important;
+        height: 100vh !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+
+    .product-modal-container {
+        margin: 0 10px 0 10px !important;
+    }
+}
+
